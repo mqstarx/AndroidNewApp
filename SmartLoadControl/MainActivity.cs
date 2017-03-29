@@ -14,6 +14,7 @@ using System.Text;
 using System.Linq;
 using Android.Graphics;
 using System.Threading;
+using System.Diagnostics;
 
 namespace SmartLoadControl
 {
@@ -29,8 +30,12 @@ namespace SmartLoadControl
         private List<string> topic_list;
         private FrameLayout m_frame_bottom;
         private byte m_conStateAlgoritm =0;
+        Stopwatch m_watch;
+        Thread timethread;
+        bool m_timer_enable = false;
+        long m_timer_count;
         //System.Timers.Timer m_CheckConnectionTimer;
-        Timer m_t;
+        // Timer m_t;
 
         private void initWidget()
         {
@@ -43,12 +48,62 @@ namespace SmartLoadControl
             
             MqttConnect();
             AddModules();
+            m_watch = new Stopwatch();
+            m_watch.Start();
+            timethread = new Thread(new
+           ThreadStart(timethread_function));
+            timethread.Start();
             // m_CheckConnectionTimer = new System.Timers.Timer(1000);
             //  m_CheckConnectionTimer.Elapsed += M_CheckConnectionTimer_Elapsed;
             // m_CheckConnectionTimer.Start();
-         //   RunUpdateLoop();
-          
+            //   RunUpdateLoop();
+            StartTimer1ms();
 
+
+        }
+        private void StartTimer1ms()
+        {
+            m_timer_count = m_watch.ElapsedMilliseconds;
+            m_timer_enable = true;
+        }
+        private void StopTimer1ms()
+        {
+
+            m_timer_enable = false;
+        }
+        private void timethread_function()
+        {
+            while (true)
+            {
+                if (m_watch.ElapsedMilliseconds - m_timer_count > 1000 && m_timer_enable == true)
+                {
+                    if (mqttClient == null || !mqttClient.IsConnected)
+                    {
+                        // Time  tick 1ms
+                        RunOnUiThread(() =>
+                    {
+
+                      //  MqttConnect();
+                       // AddModules();
+
+                    });
+
+                    }
+
+
+                }
+            }
+        }
+        public override void Finish()
+        {
+            timethread.Abort();
+            base.Finish();
+
+        }
+        public override void OnBackPressed()
+        {
+            timethread.Abort();
+            base.OnBackPressed();
         }
         /*private async void RunUpdateLoop()
         {
@@ -63,18 +118,18 @@ namespace SmartLoadControl
                 }
             }
         }*/
-       /* private void M_CheckConnectionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            RunOnUiThread(() =>
-            {
-                MqttConnect();
-               // AskAllDev();
+        /* private void M_CheckConnectionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+         {
+             RunOnUiThread(() =>
+             {
+                 MqttConnect();
+                // AskAllDev();
 
-            });
+             });
 
-           // SubscrieAllDev();
-            
-        }*/
+            // SubscrieAllDev();
+
+         }*/
 
         private void MqttConnect()
         {
