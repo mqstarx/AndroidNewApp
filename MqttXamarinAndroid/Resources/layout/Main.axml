@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <FrameLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frameRootLayer"
+        android:isScrollContainer="true">
+        <FrameLayout
+            android:minWidth="25px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_add_layer"
+            android:layout_gravity="bottom"
+            android:background="@android:color/darker_gray">
+            <Button
+                android:id="@+id/btn_AddMod"
+                android:text="+"
+                android:textColor="#EDEDED"
+                android:textSize="30sp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/btn_AddDev_selector"
+                android:shadowColor="#040105"
+                android:shadowDx="2"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4px"
+                android:layout_marginTop="4px"
+                android:textAlignment="center" />
+        </FrameLayout>
+        <ScrollView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView1"
+            android:layout_marginBottom="110px">
+            <LinearLayout
+                android:orientation="vertical"
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/linearLayout_mod" />
+        </ScrollView>
+    </FrameLayout>
+</LinearLayout>

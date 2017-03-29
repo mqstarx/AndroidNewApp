@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Имя точки доступа:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="70px"
+        android:id="@+id/ssidText"
+        android:background="@android:color/background_light"
+        android:inputType="text"
+        android:layout_marginBottom="10.0dp" />
+    <TextView
+        android:text="Пароль к точке доступа:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="70px"
+        android:id="@+id/passText"
+        android:background="@android:color/background_light"
+        android:inputType="text"
+        android:layout_marginBottom="20px" />
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView6"
+        android:text="Имя устройства" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="70px"
+        android:id="@+id/DevName"
+        android:background="@android:color/background_light"
+        android:inputType="text"
+        android:layout_marginBottom="20px" />
+    <Button
+        android:text="Считать настройки"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/read_config_btn" />
+    <Button
+        android:text="Записать настройки"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ok_config_btn" />
+    <Button
+        android:text="Применить настройки и вернутться"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/back_btn" />
+</LinearLayout>

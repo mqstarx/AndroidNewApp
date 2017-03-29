@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frameLayoutRoot"
+        android:background="@android:color/background_dark">
+        <FrameLayout
+            android:minWidth="25px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_add_layer"
+            android:layout_gravity="bottom"
+            android:background="@android:color/darker_gray">
+            <Button
+                android:id="@+id/btn_back"
+                android:text="Назад"
+                android:textColor="#EDEDED"
+                android:textSize="15sp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/btn_AddDev_selector"
+                android:shadowColor="#040105"
+                android:shadowDx="2"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:layout_gravity="right"
+                android:layout_marginBottom="4px"
+                android:layout_marginTop="4px"
+                android:textAlignment="center" />
+            <Button
+                android:id="@+id/btn_find"
+                android:text="Поиск устройств"
+                android:textColor="#EDEDED"
+                android:textSize="15sp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/btn_AddDev_selector"
+                android:shadowColor="#040105"
+                android:shadowDx="2"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:layout_gravity="left"
+                android:layout_marginBottom="4px"
+                android:layout_marginTop="4px"
+                android:textAlignment="center" />
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateDrawable="@drawable/spinner_ring"
+                android:indeterminateOnly="true"
+                android:visibility="invisible"
+                android:layout_gravity="center"
+                android:id="@+id/progressBar2" />
+        </FrameLayout>
+        <ScrollView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/devLay"
+            android:layout_marginBottom="110px">
+            <LinearLayout
+                android:orientation="vertical"
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/linearLayout1" />
+        </ScrollView>
+    </FrameLayout>
+</LinearLayout>

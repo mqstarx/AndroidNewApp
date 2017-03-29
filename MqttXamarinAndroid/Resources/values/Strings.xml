@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, Click Me!</string>
+	<string name="app_name">Управление WiFi реле</string>
+  <string name="select_dev">Выбор устройства</string>
+  <string name="dev_config">Параметры устройства</string>
+  <string name="question">Подверждение действия</string>
+  <string name="question1">Перевести устройство в режим точки доступа или обновить прошивку?</string>
+  <string name="qyes">Режим точки доступа</string>
+  <string name="qno">Обновить прошивку</string>
+  <string name="qdelete">Удалить из списка</string>
+  <string name="qcancel">Отмена</string>
+	<string-array name="qos">
+        <item>qos = 0</item>
+        <item>qos = 1</item>
+        <item>qos = 2</item>
+    </string-array>
+</resources>
