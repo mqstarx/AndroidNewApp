@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLoadControl", "MqttXamarinAndroid\SmartLoadControl.csproj", "{43431F60-6451-4BD1-8A8A-2D5111ADA2D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLoadControl", "SmartLoadControl\SmartLoadControl.csproj", "{43431F60-6451-4BD1-8A8A-2D5111ADA2D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
