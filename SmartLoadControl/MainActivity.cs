@@ -34,6 +34,7 @@ namespace SmartLoadControl
         Thread timethread;
         bool m_timer_enable = false;
         long m_timer_count;
+        bool m_has_fail_connect =false;
         //System.Timers.Timer m_CheckConnectionTimer;
         // Timer m_t;
 
@@ -79,15 +80,28 @@ namespace SmartLoadControl
                 {
                     if (mqttClient == null || !mqttClient.IsConnected)
                     {
+
                         // Time  tick 1ms
                         RunOnUiThread(() =>
+                         {
+                             if (m_has_fail_connect)
+                                 MqttConnect();
+                             else
+                             {
+                                 m_frame_bottom.SetBackgroundColor(Color.Gray);
+                                 m_has_fail_connect = true;
+                             }
+                            
+                         });
+
+                    }
+                    else
                     {
-
-                      //  MqttConnect();
-                       // AddModules();
-
-                    });
-
+                        if (m_has_fail_connect)
+                        {
+                            m_frame_bottom.SetBackgroundColor(Color.Green);
+                            m_has_fail_connect = false;
+                        }
                     }
 
 
