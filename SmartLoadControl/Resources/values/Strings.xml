@@ -2,6 +2,7 @@
 <resources>
 	<string name="hello">Hello World, Click Me!</string>
 	<string name="app_name">Управление WiFi реле</string>
+  <string name="reconnecting">Попытка переподключения...</string>
   <string name="select_dev">Выбор устройства</string>
   <string name="dev_config">Параметры устройства</string>
   <string name="question">Подверждение действия</string>

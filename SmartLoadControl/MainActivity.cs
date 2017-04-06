@@ -27,7 +27,7 @@ namespace SmartLoadControl
         private Button m_BtnAdd;
         private MqttClient mqttClient;
         private LinearLayout m_frame_control;
-        private List<string> topic_list;
+       
         private FrameLayout m_frame_bottom;
         private byte m_conStateAlgoritm =0;
         Stopwatch m_watch;
@@ -41,27 +41,40 @@ namespace SmartLoadControl
         private void initWidget()
         {
             
-            topic_list = new List<string>();
+          
             m_frame_control = FindViewById<LinearLayout>(Resource.Id.linearLayout_mod);
             m_BtnAdd = FindViewById<Button>(Resource.Id.btn_AddMod);
             m_BtnAdd.Click += M_BtnAdd_Click;
             m_frame_bottom = FindViewById<FrameLayout>(Resource.Id.btn_add_layer);
-            
-            MqttConnect();
+            m_frame_bottom.Click += M_frame_bottom_Click;
+         
+            MqttConnect(); 
             AddModules();
             m_watch = new Stopwatch();
             m_watch.Start();
             timethread = new Thread(new
            ThreadStart(timethread_function));
             timethread.Start();
-            // m_CheckConnectionTimer = new System.Timers.Timer(1000);
-            //  m_CheckConnectionTimer.Elapsed += M_CheckConnectionTimer_Elapsed;
-            // m_CheckConnectionTimer.Start();
-            //   RunUpdateLoop();
+         
             StartTimer1ms();
 
 
         }
+        //при клике попытка переподключения 
+        private void M_frame_bottom_Click(object sender, EventArgs e)
+        {
+           
+            if (mqttClient == null || !mqttClient.IsConnected)
+            {
+
+                Toast.MakeText(this,Resource.String.reconnecting, ToastLength.Short);
+                m_frame_bottom.SetBackgroundColor(Color.Brown);
+                MqttConnect();
+            }
+        }
+
+       
+       
         private void StartTimer1ms()
         {
             m_timer_count = m_watch.ElapsedMilliseconds;
@@ -72,6 +85,7 @@ namespace SmartLoadControl
 
             m_timer_enable = false;
         }
+        // таймер слежения за состоянием соединения с брокером
         private void timethread_function()
         {
             while (true)
@@ -80,32 +94,51 @@ namespace SmartLoadControl
                 {
                     if (mqttClient == null || !mqttClient.IsConnected)
                     {
-
-                        // Time  tick 1ms
-                        RunOnUiThread(() =>
-                         {
-                             if (m_has_fail_connect)
-                                 MqttConnect();
-                             else
+                        if (!m_has_fail_connect)
+                        {
+                            // Time  tick 1ms
+                            RunOnUiThread(() =>
                              {
+
                                  m_frame_bottom.SetBackgroundColor(Color.Gray);
                                  m_has_fail_connect = true;
-                             }
-                            
-                         });
+                                
 
-                    }
-                    else
-                    {
-                        if (m_has_fail_connect)
-                        {
-                            m_frame_bottom.SetBackgroundColor(Color.Green);
-                            m_has_fail_connect = false;
+
+                             });
                         }
                     }
+                    /*  if (m_has_fail_connect && (mqttClient == null || !mqttClient.IsConnected))
+                      {
+                          RunOnUiThread(() =>
+                          {
+                              MqttConnect();
+                          });
+                      }*/
+                    /*  else
+                      {
+                          RunOnUiThread(() =>
+                          {
+                              if (m_has_fail_connect)
+                              {
+                                  m_frame_bottom.SetBackgroundColor(Color.Green);
+                                  m_has_fail_connect = false;
+                              }
+                          });
+                      }*/
 
 
                 }
+                /*if (m_watch.ElapsedMilliseconds - m_timer_count > 5000 && m_timer_enable == true)
+                {
+                    if (m_has_fail_connect && (mqttClient == null || !mqttClient.IsConnected) )
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            MqttConnect();
+                        });
+                    }
+                }*/
             }
         }
         public override void Finish()
@@ -119,77 +152,53 @@ namespace SmartLoadControl
             timethread.Abort();
             base.OnBackPressed();
         }
-        /*private async void RunUpdateLoop()
-        {
-           
-            while (true)
-            {
-                await Task.Delay(1000);
-                if (mqttClient == null || !mqttClient.IsConnected)
-                {
-                    MqttConnect();
-                    AddModules();
-                }
-            }
-        }*/
-        /* private void M_CheckConnectionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-         {
-             RunOnUiThread(() =>
-             {
-                 MqttConnect();
-                // AskAllDev();
-
-             });
-
-            // SubscrieAllDev();
-
-         }*/
+       
 
         private void MqttConnect()
         {
-           
-                if (mqttClient == null)
+
+            if (mqttClient == null)
+            {
+                try
+                {
+
+                    mqttClient = new MqttClient("test.mosca.io");
+
+                    mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
+
+                    mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
+                    m_frame_bottom.SetBackgroundColor(Color.Green);
+                    //AddModules();
+                    m_has_fail_connect = false;
+
+                }
+                catch
+                {
+                    m_frame_bottom.SetBackgroundColor(Color.Gray);
+                    m_has_fail_connect = true;
+                }
+
+            }
+            else
+            {
+                if (!mqttClient.IsConnected)
                 {
                     try
                     {
 
-                        mqttClient = new MqttClient("test.mosca.io");
-                        
-                        mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
-
                         mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
                         m_frame_bottom.SetBackgroundColor(Color.Green);
-                        //AddModules();
-                      
-
+                        m_has_fail_connect = false;
+                        // AddModules();
                     }
-                    catch
+                    catch(Exception exc)
                     {
                         m_frame_bottom.SetBackgroundColor(Color.Gray);
-                       
+                        m_has_fail_connect = true;
                     }
-
                 }
-                else
-                {
-                    if (!mqttClient.IsConnected)
-                    {
-                        try
-                        {
 
-                            mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
-                            m_frame_bottom.SetBackgroundColor(Color.Green);
-                           
-                           // AddModules();
-                        }
-                        catch
-                        {
-                            m_frame_bottom.SetBackgroundColor(Color.Gray);
-                          
-                        }
-                    }
-               
-                }
+            }
             
            
           

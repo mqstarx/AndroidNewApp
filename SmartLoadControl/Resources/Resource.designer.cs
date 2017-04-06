@@ -1263,32 +1263,35 @@ namespace SmartLoadControl
 			// aapt resource value: 0x7f0b000e
 			public const int app_name = 2131427342;
 			
-			// aapt resource value: 0x7f0b0010
-			public const int dev_config = 2131427344;
+			// aapt resource value: 0x7f0b0011
+			public const int dev_config = 2131427345;
 			
 			// aapt resource value: 0x7f0b000d
 			public const int hello = 2131427341;
 			
+			// aapt resource value: 0x7f0b0017
+			public const int qcancel = 2131427351;
+			
 			// aapt resource value: 0x7f0b0016
-			public const int qcancel = 2131427350;
+			public const int qdelete = 2131427350;
 			
 			// aapt resource value: 0x7f0b0015
-			public const int qdelete = 2131427349;
-			
-			// aapt resource value: 0x7f0b0014
-			public const int qno = 2131427348;
-			
-			// aapt resource value: 0x7f0b0011
-			public const int question = 2131427345;
+			public const int qno = 2131427349;
 			
 			// aapt resource value: 0x7f0b0012
-			public const int question1 = 2131427346;
+			public const int question = 2131427346;
 			
 			// aapt resource value: 0x7f0b0013
-			public const int qyes = 2131427347;
+			public const int question1 = 2131427347;
+			
+			// aapt resource value: 0x7f0b0014
+			public const int qyes = 2131427348;
 			
 			// aapt resource value: 0x7f0b000f
-			public const int select_dev = 2131427343;
+			public const int reconnecting = 2131427343;
+			
+			// aapt resource value: 0x7f0b0010
+			public const int select_dev = 2131427344;
 			
 			static String()
 			{
