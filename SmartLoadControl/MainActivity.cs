@@ -15,6 +15,7 @@ using System.Linq;
 using Android.Graphics;
 using System.Threading;
 using System.Diagnostics;
+using Android.Net;
 
 namespace SmartLoadControl
 {
@@ -29,7 +30,7 @@ namespace SmartLoadControl
         private LinearLayout m_frame_control;
        
         private FrameLayout m_frame_bottom;
-        private byte m_conStateAlgoritm =0;
+        
         Stopwatch m_watch;
         Thread timethread;
         bool m_timer_enable = false;
@@ -46,7 +47,7 @@ namespace SmartLoadControl
             m_BtnAdd = FindViewById<Button>(Resource.Id.btn_AddMod);
             m_BtnAdd.Click += M_BtnAdd_Click;
             m_frame_bottom = FindViewById<FrameLayout>(Resource.Id.btn_add_layer);
-            m_frame_bottom.Click += M_frame_bottom_Click;
+           
          
             MqttConnect(); 
             AddModules();
@@ -60,18 +61,7 @@ namespace SmartLoadControl
 
 
         }
-        //при клике попытка переподключения 
-        private void M_frame_bottom_Click(object sender, EventArgs e)
-        {
-           
-            if (mqttClient == null || !mqttClient.IsConnected)
-            {
-
-                Toast.MakeText(this,Resource.String.reconnecting, ToastLength.Short);
-                m_frame_bottom.SetBackgroundColor(Color.Brown);
-                MqttConnect();
-            }
-        }
+     
 
        
        
@@ -108,37 +98,20 @@ namespace SmartLoadControl
                              });
                         }
                     }
-                    /*  if (m_has_fail_connect && (mqttClient == null || !mqttClient.IsConnected))
+                     if (m_has_fail_connect && ((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo !=null &&((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo.IsConnected &&(mqttClient == null || !mqttClient.IsConnected))
                       {
                           RunOnUiThread(() =>
                           {
                               MqttConnect();
+                              SubscrieAllDev();
+                              AskAllDev();
                           });
-                      }*/
-                    /*  else
-                      {
-                          RunOnUiThread(() =>
-                          {
-                              if (m_has_fail_connect)
-                              {
-                                  m_frame_bottom.SetBackgroundColor(Color.Green);
-                                  m_has_fail_connect = false;
-                              }
-                          });
-                      }*/
+                      }
+                   
 
 
                 }
-                /*if (m_watch.ElapsedMilliseconds - m_timer_count > 5000 && m_timer_enable == true)
-                {
-                    if (m_has_fail_connect && (mqttClient == null || !mqttClient.IsConnected) )
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            MqttConnect();
-                        });
-                    }
-                }*/
+              
             }
         }
         public override void Finish()
@@ -185,7 +158,10 @@ namespace SmartLoadControl
                 {
                     try
                     {
+                        mqttClient = null;
+                        mqttClient = new MqttClient("test.mosca.io");
 
+                        mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
                         mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
                         m_frame_bottom.SetBackgroundColor(Color.Green);
                         m_has_fail_connect = false;
@@ -319,8 +295,7 @@ namespace SmartLoadControl
         }
         private void SubscrieAllDev()
         {
-            if (m_conStateAlgoritm == 1 || m_conStateAlgoritm == 3)
-            {
+           
                 if (mqttClient != null && mqttClient.IsConnected)
                 {
                     for (int i = 0; i < m_frame_control.ChildCount; i++)
@@ -330,7 +305,7 @@ namespace SmartLoadControl
                         mqttClient.Subscribe(new string[] { _devInfo.Topic }, new byte[] { 0 });
                     }
                 }
-            }
+            
         }
         private void Btn_dev_LongClick(object sender, Android.Views.View.LongClickEventArgs e)
         {
