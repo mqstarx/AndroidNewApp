@@ -127,7 +127,7 @@ namespace SmartLoadControl
         }
        
 
-        private void MqttConnect()
+        private bool MqttConnect()
         {
 
             if (mqttClient == null)
@@ -143,12 +143,13 @@ namespace SmartLoadControl
                     m_frame_bottom.SetBackgroundColor(Color.Green);
                     //AddModules();
                     m_has_fail_connect = false;
-
+                    return true;
                 }
                 catch
                 {
                     m_frame_bottom.SetBackgroundColor(Color.Gray);
                     m_has_fail_connect = true;
+                    return false;
                 }
 
             }
@@ -165,14 +166,18 @@ namespace SmartLoadControl
                         mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
                         m_frame_bottom.SetBackgroundColor(Color.Green);
                         m_has_fail_connect = false;
+                        return true;
                         // AddModules();
                     }
-                    catch(Exception exc)
+                    catch (Exception exc)
                     {
                         m_frame_bottom.SetBackgroundColor(Color.Gray);
                         m_has_fail_connect = true;
+                        return false;
                     }
                 }
+                else
+                    return true;
 
             }
             
