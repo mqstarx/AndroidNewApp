@@ -34,8 +34,11 @@ namespace SmartLoadControl
         Stopwatch m_watch;
         Thread timethread;
         bool m_timer_enable = false;
-        long m_timer_count;
+        long m_timer_count1000;
+        long m_timer_count10000;
         bool m_has_fail_connect =false;
+        bool m_broker_last_fail = false;
+        string m_mqtt_broker = "test.mosca.io";
         //System.Timers.Timer m_CheckConnectionTimer;
         // Timer m_t;
 
@@ -47,7 +50,7 @@ namespace SmartLoadControl
             m_BtnAdd = FindViewById<Button>(Resource.Id.btn_AddMod);
             m_BtnAdd.Click += M_BtnAdd_Click;
             m_frame_bottom = FindViewById<FrameLayout>(Resource.Id.btn_add_layer);
-           
+          //  m_frame_bottom.LongClick += M_frame_bottom_LongClick;
          
             MqttConnect(); 
             AddModules();
@@ -61,13 +64,31 @@ namespace SmartLoadControl
 
 
         }
-     
+        //для теста
+        private void M_frame_bottom_LongClick(object sender, Android.Views.View.LongClickEventArgs e)
+        {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.SetTitle(Resource.String.question);
 
-       
-       
+            alert.SetItems(new string[] { "broker_ok", "broker_fail" }, (senderAlert, args) =>
+            {
+                if (args.Which == 0)
+                {
+                    m_mqtt_broker = "test.mosca.io";
+                }
+                if (args.Which == 1)
+                {
+                    m_mqtt_broker = "test.mosca123.io";
+                }
+            });
+            Dialog dialog = alert.Create();
+            dialog.Show();
+        }
+
         private void StartTimer1ms()
         {
-            m_timer_count = m_watch.ElapsedMilliseconds;
+            m_timer_count1000 = m_watch.ElapsedMilliseconds;
+            m_timer_count10000 = m_watch.ElapsedMilliseconds;
             m_timer_enable = true;
         }
         private void StopTimer1ms()
@@ -80,7 +101,7 @@ namespace SmartLoadControl
         {
             while (true)
             {
-                if (m_watch.ElapsedMilliseconds - m_timer_count > 1000 && m_timer_enable == true)
+                if (m_watch.ElapsedMilliseconds - m_timer_count1000 > 1000 && m_timer_enable == true)
                 {
                     if (mqttClient == null || !mqttClient.IsConnected)
                     {
@@ -92,26 +113,48 @@ namespace SmartLoadControl
 
                                  m_frame_bottom.SetBackgroundColor(Color.Gray);
                                  m_has_fail_connect = true;
-                                
+
 
 
                              });
                         }
                     }
-                     if (m_has_fail_connect && ((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo !=null &&((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo.IsConnected &&(mqttClient == null || !mqttClient.IsConnected))
-                      {
-                          RunOnUiThread(() =>
-                          {
-                              MqttConnect();
-                              SubscrieAllDev();
-                              AskAllDev();
-                          });
-                      }
-                   
+                    if (m_has_fail_connect &&!m_broker_last_fail && ((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo != null && ((ConnectivityManager)GetSystemService(ConnectivityService)).ActiveNetworkInfo.IsConnected && (mqttClient == null || !mqttClient.IsConnected))
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (MqttConnect())
+                            {
+                                SubscrieAllDev();
+                                AskAllDev();
+                            }
+                            else
+                                m_broker_last_fail = true;
 
+                        });
+                    }
+
+                    m_timer_count1000 = m_watch.ElapsedMilliseconds;
 
                 }
+                if (m_watch.ElapsedMilliseconds - m_timer_count10000 > 10000 && m_timer_enable == true)
+                {
+                    if(m_broker_last_fail)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (MqttConnect())
+                            {
+                                SubscrieAllDev();
+                                AskAllDev();
+                                m_broker_last_fail = false;
+                            }
+                        });
+                    }
+                    m_timer_count10000 = m_watch.ElapsedMilliseconds;
+                }
               
+
             }
         }
         public override void Finish()
@@ -135,7 +178,7 @@ namespace SmartLoadControl
                 try
                 {
 
-                    mqttClient = new MqttClient("test.mosca.io");
+                    mqttClient = new MqttClient(m_mqtt_broker);
 
                     mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
 
@@ -160,7 +203,7 @@ namespace SmartLoadControl
                     try
                     {
                         mqttClient = null;
-                        mqttClient = new MqttClient("test.mosca.io");
+                        mqttClient = new MqttClient(m_mqtt_broker);
 
                         mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
                         mqttClient.Connect("SmartAPP" + new Random(10000).Next().ToString());
